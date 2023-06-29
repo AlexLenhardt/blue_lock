@@ -3,7 +3,11 @@ package com.backend.blue_lock
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
-@SpringBootApplication
+@SpringBootApplication(
+	scanBasePackages = [
+		"com.backend.blue_lock",
+	],
+)
 class BlueLockApplication
 
 fun main(args: Array<String>) {
