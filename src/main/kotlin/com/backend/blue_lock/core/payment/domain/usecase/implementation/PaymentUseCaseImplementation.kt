@@ -10,12 +10,17 @@ import org.springframework.stereotype.Service
 @Service
 class PaymentUseCaseImplementation(
     val repository: PaymentRepository
-): PaymentUseCase {
+) : PaymentUseCase {
     override fun postPayment(payment: Payment): PaymentResponse {
-        return try{
+        return try {
+            if (payment.uuid != null) {
+                repository.updatePayment(payment)
+            } else {
+                repository.createPayment(payment)
+            }
 
             PaymentResponse(payment = payment)
-        }catch (e: Exception){
+        } catch (e: Exception) {
             PaymentResponse(error = POST_PAYMENT_ERROR)
         }
     }

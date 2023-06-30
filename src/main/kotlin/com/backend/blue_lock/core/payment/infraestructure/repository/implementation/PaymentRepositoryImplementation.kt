@@ -3,6 +3,7 @@ package com.backend.blue_lock.core.payment.infraestructure.repository.implementa
 import com.backend.blue_lock.core.payment.domain.entities.Payment
 import com.backend.blue_lock.core.payment.infraestructure.repository.PaymentRepository
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 class PaymentRepositoryImplementation: PaymentRepository {
@@ -11,6 +12,10 @@ class PaymentRepositoryImplementation: PaymentRepository {
     }
 
     override fun updatePayment(payment: Payment) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPayment(uuid: UUID): Payment {
         TODO("Not yet implemented")
     }
 }
