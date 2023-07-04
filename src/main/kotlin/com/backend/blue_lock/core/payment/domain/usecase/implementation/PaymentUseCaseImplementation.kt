@@ -6,6 +6,7 @@ import com.backend.blue_lock.core.payment.domain.exception.POST_PAYMENT_ERROR
 import com.backend.blue_lock.core.payment.domain.usecase.PaymentUseCase
 import com.backend.blue_lock.core.payment.infraestructure.repository.PaymentRepository
 import org.springframework.stereotype.Service
+import com.github.f4b6a3.uuid.UuidCreator
 
 @Service
 class PaymentUseCaseImplementation(
@@ -16,7 +17,7 @@ class PaymentUseCaseImplementation(
             if (payment.uuid != null) {
                 repository.updatePayment(payment)
             } else {
-                repository.createPayment(payment)
+                repository.createPayment(payment.copy(uuid = UuidCreator.getTimeOrdered()))
             }
 
             PaymentResponse(payment = payment)

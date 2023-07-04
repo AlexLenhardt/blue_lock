@@ -32,6 +32,14 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
+	val exposedVersion = "0.40.1"
+	implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposedVersion")
+	implementation("org.postgresql:postgresql")
+	implementation("com.github.f4b6a3:uuid-creator:5.2.0")
+
 	// Database dependencies
 	runtimeOnly("org.postgresql:postgresql")
 

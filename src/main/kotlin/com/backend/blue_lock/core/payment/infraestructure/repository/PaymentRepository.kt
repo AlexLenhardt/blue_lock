@@ -8,5 +8,5 @@ interface PaymentRepository {
 
     fun updatePayment(payment: Payment)
 
-    fun getPayment(uuid: UUID): Payment
+    fun getPayment(uuid: UUID): Payment?
 }

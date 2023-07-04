@@ -6,6 +6,7 @@ import org.springframework.boot.runApplication
 @SpringBootApplication(
 	scanBasePackages = [
 		"com.backend.blue_lock",
+		"org.jetbrains.exposed.spring",
 	],
 )
 class BlueLockApplication

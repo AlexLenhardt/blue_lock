@@ -1,21 +1,73 @@
 package com.backend.blue_lock.core.payment.infraestructure.repository.implementation
 
 import com.backend.blue_lock.core.payment.domain.entities.Payment
+import com.backend.blue_lock.core.payment.domain.entities.PaymentType
 import com.backend.blue_lock.core.payment.infraestructure.repository.PaymentRepository
+import com.backend.blue_lock.core.payment.infraestructure.repository.database.PaymentDatabase
+import com.backend.blue_lock.core.payment.infraestructure.repository.database.PaymentTypeDatabase
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-class PaymentRepositoryImplementation: PaymentRepository {
+class PaymentRepositoryImplementation : PaymentRepository {
     override fun createPayment(payment: Payment) {
-        TODO("Not yet implemented")
+        transaction {
+            PaymentDatabase.insert {
+                it[this.uuid] = payment.uuid!!
+                it[this.paymentType] = payment.type!!.uuid!!
+                it[this.date] = payment.date!!
+                it[this.value] = payment.value!!
+                it[this.description] = payment.description
+            }
+        }
     }
 
     override fun updatePayment(payment: Payment) {
-        TODO("Not yet implemented")
+        transaction {
+            PaymentDatabase.update({
+                PaymentDatabase.uuid eq payment.uuid!!
+            }) {
+                it[this.paymentType] = payment.type!!.uuid!!
+                it[this.date] = payment.date!!
+                it[this.value] = payment.value!!
+                it[this.description] = payment.description
+            }
+        }
     }
 
-    override fun getPayment(uuid: UUID): Payment {
-        TODO("Not yet implemented")
+    override fun getPayment(uuid: UUID): Payment? {
+        return transaction {
+            PaymentDatabase
+                .select(
+                    PaymentDatabase.uuid eq uuid
+                )
+                .firstOrNull()
+                ?.toPayment()
+        }
     }
 }
+
+private fun ResultRow.toPayment(): Payment {
+    return Payment(
+        uuid = this.getOrNull(PaymentDatabase.uuid),
+        description = this.getOrNull(PaymentDatabase.description),
+        type = this.toPaymentType(),
+        value = this.getOrNull(PaymentDatabase.value),
+        date = this.getOrNull(PaymentDatabase.date),
+    )
+}
+
+private fun ResultRow.toPaymentType(): PaymentType {
+    return PaymentType(
+        uuid = this.getOrNull(PaymentTypeDatabase.uuid),
+        code = this.getOrNull(PaymentTypeDatabase.code),
+        label = this.getOrNull(PaymentTypeDatabase.label)
+    )
+}
+
