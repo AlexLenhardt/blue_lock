@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "3.1.1"
+	id("org.springframework.boot") version "3.0.0"
 	id("io.spring.dependency-management") version "1.1.0"
 	id("org.cyclonedx.bom") version "1.7.0"
 
@@ -41,6 +41,10 @@ dependencies {
 	implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 	implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposedVersion")
 	implementation("org.postgresql:postgresql")
+
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.3")
+	developmentOnly("org.springframework.boot:spring-boot-starter-logging")
+	developmentOnly("org.springframework.boot:spring-boot-starter-web")
 
 	// Project specific libraries
 	implementation("com.auth0:java-jwt:4.3.0")
