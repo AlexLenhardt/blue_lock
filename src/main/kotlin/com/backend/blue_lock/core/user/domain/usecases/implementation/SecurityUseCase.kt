@@ -172,6 +172,7 @@ class SecurityUseCase(
                 ExecutePasswordResetResponse(false, SECURITY_PASSWORD_RESET_REQUEST_EXPIRED)
             }
         } catch (e: Exception) {
+            println(e.message)
             ExecutePasswordResetResponse(false, SECURITY_STORAGE_ERROR)
         }
     }
