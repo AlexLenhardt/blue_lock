@@ -1,0 +1,11 @@
+###
+GET http://localhost:8080/foo/all
+
+###
+POST http://localhost:8080/foo/manage
+Content-Type: application/json
+
+{
+  "bar": "sample",
+  "bas": 1
+}

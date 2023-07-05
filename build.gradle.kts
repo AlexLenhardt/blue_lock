@@ -26,6 +26,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-mail")
+	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
 	// Kotlin specific libraries
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -38,6 +41,9 @@ dependencies {
 	implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 	implementation("org.jetbrains.exposed:exposed-spring-boot-starter:$exposedVersion")
 	implementation("org.postgresql:postgresql")
+
+	// Project specific libraries
+	implementation("com.auth0:java-jwt:4.3.0")
 	implementation("com.github.f4b6a3:uuid-creator:5.2.0")
 
 	// Database dependencies
