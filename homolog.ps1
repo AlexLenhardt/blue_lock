@@ -1,4 +1,4 @@
-Write-Host "Building Lince Tech ERP"
+Write-Host "Building Payments"
 
 # Add java 17 to the path
 #$Java17Path = "C:\java-17-openjdk-17.0.4.1.1-1"
