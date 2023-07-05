@@ -11,7 +11,7 @@ object PaymentDatabase : Table("payments") {
     val value = double("value")
     val paymentType = uuid("payment_type").references(PaymentTypeDatabase.uuid)
     val description = text("description").nullable()
-    val statusCode = integer("status_code")
+    val statusCode = integer("status_code").default(0)
     val modifiedAt = datetime("modified_at").defaultExpression(CurrentDateTime)
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
 
