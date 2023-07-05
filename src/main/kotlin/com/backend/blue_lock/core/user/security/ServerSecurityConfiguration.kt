@@ -56,18 +56,7 @@ class ServerSecurityConfiguration {
         return UrlBasedCorsConfigurationSource().apply {
             registerCorsConfiguration("/**", CorsConfiguration().apply {
                 allowedOrigins = listOf(
-                    "http://microerp.lince.com.br/",
-                    "https://microerp.lince.com.br/",
-                    "http://homologmicroerp.lince.com.br/",
-                    "https://homologmicroerp.lince.com.br/",
-                    "https://10.0.11.76:3000/",
-                    "http://10.0.11.76:3000/",
-                    "https://10.0.11.110:3000/",
                     "http://10.0.11.110:3000/",
-                    "http://10.0.11.112:3000/",
-                    "https://10.0.11.112:3000/",
-                    "https://singets.lince.com.br:8080/",
-                    "http://singets.lince.com.br:8080/",
                 )
                 allowedMethods = listOf("*")
                 allowCredentials = true

@@ -68,6 +68,9 @@ class PaymentRepositoryImplementation : PaymentRepository {
                     PaymentDatabase.description,
                     PaymentDatabase.date,
                     PaymentDatabase.value,
+                    PaymentTypeDatabase.label,
+                    PaymentTypeDatabase.uuid,
+                    PaymentTypeDatabase.code,
                 )
                 .selectAll()
                 .limit(size, offset = (((page - 1) * size).toLong()))
