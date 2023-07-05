@@ -4,13 +4,14 @@ import com.backend.blue_lock.core.payment.domain.entities.Payment
 import com.backend.blue_lock.core.payment.domain.entities.PaymentType
 import com.backend.blue_lock.core.payment.infraestructure.repository.PaymentRepository
 import com.backend.blue_lock.core.payment.infraestructure.repository.database.PaymentDatabase
+import com.backend.blue_lock.core.payment.infraestructure.repository.database.PaymentDatabase.innerJoin
+import com.backend.blue_lock.core.payment.infraestructure.repository.database.PaymentDatabase.paymentType
 import com.backend.blue_lock.core.payment.infraestructure.repository.database.PaymentTypeDatabase
-import org.jetbrains.exposed.sql.ResultRow
+import com.backend.blue_lock.core.payment.infraestructure.repository.database.withPaymentFilters
+import com.backend.blue_lock.core.shared.entities.BasicFilter
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -49,6 +50,65 @@ class PaymentRepositoryImplementation : PaymentRepository {
                 )
                 .firstOrNull()
                 ?.toPayment()
+        }
+    }
+
+    override fun listPayments(
+        page: Int,
+        size: Int,
+        sortBy: String?,
+        orderBy: String?,
+        basicFilter: List<BasicFilter>?
+    ): List<Payment>? {
+        return transaction {
+            PaymentDatabase
+                .innerJoin(PaymentTypeDatabase, { paymentType }, { uuid })
+                .slice(
+                    PaymentDatabase.uuid,
+                    PaymentDatabase.description,
+                    PaymentDatabase.date,
+                    PaymentDatabase.value,
+                )
+                .selectAll()
+                .limit(size, offset = (((page - 1) * size).toLong()))
+                .orderBy(
+                    when (sortBy) {
+                        "desc" -> when (orderBy) {
+                            "description" -> PaymentDatabase.description to SortOrder.DESC
+                            "value" -> PaymentDatabase.value to SortOrder.DESC
+                            "date" -> PaymentDatabase.date to SortOrder.DESC
+                            "type" -> PaymentDatabase.paymentType to SortOrder.DESC
+
+                            else -> PaymentDatabase.createdAt to SortOrder.DESC
+                        }
+
+                        "asc" -> when (orderBy) {
+                            "description" -> PaymentDatabase.description to SortOrder.ASC
+                            "value" -> PaymentDatabase.value to SortOrder.ASC
+                            "date" -> PaymentDatabase.date to SortOrder.ASC
+                            "type" -> PaymentDatabase.paymentType to SortOrder.ASC
+
+                            else -> PaymentDatabase.createdAt to SortOrder.ASC
+                        }
+
+                        else -> error("VALUE NOT FOUND")
+                    }
+                )
+                .withPaymentFilters(basicFilter)
+                .map {
+                    it.toPayment()
+                }
+        }
+    }
+
+    override fun countPayments(basicFilter: List<BasicFilter>?): Int {
+        return transaction {
+            PaymentDatabase
+                .innerJoin(PaymentTypeDatabase, { paymentType }, { uuid })
+                .selectAll()
+                .withPaymentFilters(basicFilter)
+                .count()
+                .toInt()
         }
     }
 }

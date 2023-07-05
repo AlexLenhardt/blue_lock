@@ -6,7 +6,7 @@ val POST_PAYMENT_ERROR = PaymentException("POST_PAYMENT_ERROR", "Erro ao cadastr
 
 val PAYMENT_NOT_INFORMED = PaymentException("PAYMENT_NOT_INFORMED", "Pagamento não informado")
 
-val PAYMENT_DATABASE_ERROR = PaymentException("PAYMENT_DATABASE_ERROR", "Erro no repositório")
+val PAYMENT_DATABASE_ERROR = PaymentException("PAYMENT_DATABASE_ERROR", "Erro no banco de dados")
 
 class PaymentException(
     code: String,
