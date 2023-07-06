@@ -2,7 +2,7 @@ package com.backend.blue_lock.core.user.domain.email
 
 import com.backend.blue_lock.core.shared.config.GenericMail
 
-const val DEFAULT_EMAIL_RESET_URL = "http://10.0.11.110:3000/password/reset"
+const val DEFAULT_EMAIL_RESET_URL = "https://192.168.3.11:3000/password/reset"
 class UserEmail(
     to: String,
     subject: String,

@@ -2,12 +2,14 @@ package com.backend.blue_lock.core.user.domain.usecases
 
 import com.backend.blue_lock.core.user.domain.entities.*
 import com.backend.blue_lock.core.user.domain.usecases.response.GeneratePasswordResponse
+import org.springframework.stereotype.Component
 
 /**
  * The security use case is the only place in the application allowed to manipulate user credentials and authentication
  * logic. Any usage of the User#passwordHash outside the security usecase and the respective security repository are
  * considered wrong, and should be moved to the appropriate "Security" classes.
  */
+@Component
 interface SecurityUseCase {
     /**
      * Create a new user and grants basic access to the system
