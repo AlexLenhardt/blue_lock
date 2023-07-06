@@ -44,7 +44,6 @@ class Payment(
 
     @GetMapping("/{paymentUUID}")
     fun getPayment(@PathVariable paymentUUID: UUID?): PaymentResponse {
-        println(paymentUUID)
         return usecase.getPayment(paymentUUID)
     }
 }

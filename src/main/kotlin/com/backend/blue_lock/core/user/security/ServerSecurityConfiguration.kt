@@ -57,6 +57,7 @@ class ServerSecurityConfiguration {
             registerCorsConfiguration("/**", CorsConfiguration().apply {
                 allowedOrigins = listOf(
                     "http://10.0.11.110:3000/",
+                    "http://10.0.11.110:9001/",
                 )
                 allowedMethods = listOf("*")
                 allowCredentials = true
