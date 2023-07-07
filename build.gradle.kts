@@ -2,14 +2,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	id("org.springframework.boot") version "3.0.0"
-	id("io.spring.dependency-management") version "1.1.0"
+	id("io.spring.dependency-management") version "1.0.12.RELEASE"
 	id("org.cyclonedx.bom") version "1.7.0"
 
 	kotlin("plugin.serialization") version "1.7.10"
-	kotlin("jvm") version "1.8.22"
-	kotlin("plugin.spring") version "1.8.22"
+	kotlin("jvm") version "1.7.10"
+	kotlin("plugin.spring") version "1.7.10"
 }
-
 group = "com.backend"
 version = "0.0.1-SNAPSHOT"
 
