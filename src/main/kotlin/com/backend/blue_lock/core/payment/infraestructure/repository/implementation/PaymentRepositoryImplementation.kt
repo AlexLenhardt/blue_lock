@@ -45,11 +45,20 @@ class PaymentRepositoryImplementation : PaymentRepository {
     override fun getPayment(uuid: UUID): Payment? {
         return transaction {
             PaymentDatabase
+                .innerJoin(PaymentTypeDatabase, { PaymentTypeDatabase.uuid }, { PaymentDatabase.paymentType })
                 .select(
                     PaymentDatabase.uuid eq uuid
                 )
                 .firstOrNull()
                 ?.toPayment()
+        }
+    }
+
+    override fun getPaymentTypeByCode(code: Int): PaymentType? {
+        return transaction {
+            PaymentTypeDatabase
+                .select(PaymentTypeDatabase.code eq code)
+                .firstOrNull()?.toPaymentType()
         }
     }
 
@@ -112,6 +121,16 @@ class PaymentRepositoryImplementation : PaymentRepository {
                 .withPaymentFilters(basicFilter)
                 .count()
                 .toInt()
+        }
+    }
+
+    override fun listPaymentType(): List<PaymentType> {
+        return transaction {
+            PaymentTypeDatabase
+                .selectAll()
+                .map {
+                    it.toPaymentType()
+                }
         }
     }
 }

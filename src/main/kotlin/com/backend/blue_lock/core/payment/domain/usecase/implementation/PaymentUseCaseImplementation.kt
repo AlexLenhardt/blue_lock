@@ -3,6 +3,7 @@ package com.backend.blue_lock.core.payment.domain.usecase.implementation
 import com.backend.blue_lock.core.payment.domain.entities.Payment
 import com.backend.blue_lock.core.payment.domain.entities.PaymentListResponse
 import com.backend.blue_lock.core.payment.domain.entities.PaymentResponse
+import com.backend.blue_lock.core.payment.domain.entities.PaymentType
 import com.backend.blue_lock.core.payment.domain.exception.*
 import com.backend.blue_lock.core.payment.domain.exception.PAYMENT_DATABASE_ERROR
 import com.backend.blue_lock.core.payment.domain.exception.POST_PAYMENT_ERROR
@@ -11,6 +12,7 @@ import com.backend.blue_lock.core.payment.infraestructure.repository.PaymentRepo
 import com.backend.blue_lock.core.shared.entities.BasicFilter
 import org.springframework.stereotype.Service
 import com.github.f4b6a3.uuid.UuidCreator
+import org.slf4j.LoggerFactory
 import java.util.UUID
 import kotlin.math.ceil
 
@@ -18,8 +20,19 @@ import kotlin.math.ceil
 class PaymentUseCaseImplementation(
     val repository: PaymentRepository
 ) : PaymentUseCase {
+    companion object {
+        private val logger = LoggerFactory.getLogger(PaymentUseCaseImplementation::class.java)
+    }
+
     override fun postPayment(payment: Payment): PaymentResponse {
         return try {
+            if (payment.type != null && payment.type?.code != 0) {
+                payment.type = repository.getPaymentTypeByCode(payment.type!!.code!!)
+                    ?: return PaymentResponse(error = PAYMENT_TYPE_NOT_INFORMED)
+            } else {
+                return PaymentResponse(error = PAYMENT_TYPE_NOT_INFORMED)
+            }
+
             if (payment.uuid != null) {
                 repository.updatePayment(payment)
             } else {
@@ -29,6 +42,7 @@ class PaymentUseCaseImplementation(
 
             PaymentResponse(payment = payment)
         } catch (e: Exception) {
+            logger.error("POST_PAYMENT_ERROR", e)
             PaymentResponse(error = POST_PAYMENT_ERROR)
         }
     }
@@ -38,14 +52,14 @@ class PaymentUseCaseImplementation(
             return PaymentResponse(error = PAYMENT_NOT_INFORMED)
         }
 
-        return try{
+        return try {
             val payment = repository.getPayment(paymentUUID)
             PaymentResponse(payment = payment)
-        }catch(e: Exception){
+        } catch (e: Exception) {
             PaymentResponse(error = PAYMENT_DATABASE_ERROR)
         }
     }
-    
+
     override fun listPayments(
         page: Int?,
         size: Int?,
@@ -81,5 +95,9 @@ class PaymentUseCaseImplementation(
         } catch (e: Exception) {
             PaymentListResponse(error = PAYMENT_DATABASE_ERROR)
         }
+    }
+
+    override fun listPaymentType(): List<PaymentType> {
+        return repository.listPaymentType()
     }
 }

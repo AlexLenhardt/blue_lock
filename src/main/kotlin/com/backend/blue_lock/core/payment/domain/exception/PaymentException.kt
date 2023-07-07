@@ -8,6 +8,8 @@ val PAYMENT_NOT_INFORMED = PaymentException("PAYMENT_NOT_INFORMED", "Pagamento n
 
 val PAYMENT_DATABASE_ERROR = PaymentException("PAYMENT_DATABASE_ERROR", "Erro no banco de dados")
 
+val PAYMENT_TYPE_NOT_INFORMED = PaymentException("PAYMENT_TYPE_NOT_INFORMED", "Tipo de pagamento não informado")
+
 class PaymentException(
     code: String,
     description: String

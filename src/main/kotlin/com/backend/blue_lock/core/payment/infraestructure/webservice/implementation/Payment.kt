@@ -3,6 +3,7 @@ package com.backend.blue_lock.core.payment.infraestructure.webservice.implementa
 import com.backend.blue_lock.core.payment.domain.entities.Payment
 import com.backend.blue_lock.core.payment.domain.entities.PaymentListResponse
 import com.backend.blue_lock.core.payment.domain.entities.PaymentResponse
+import com.backend.blue_lock.core.payment.domain.entities.PaymentType
 import com.backend.blue_lock.core.payment.domain.usecase.PaymentUseCase
 import com.backend.blue_lock.core.shared.entities.BasicFilter
 import com.backend.blue_lock.core.payment.infraestructure.repository.PaymentRepository
@@ -45,5 +46,10 @@ class Payment(
     @GetMapping("/{paymentUUID}")
     fun getPayment(@PathVariable paymentUUID: UUID?): PaymentResponse {
         return usecase.getPayment(paymentUUID)
+    }
+
+    @GetMapping("/type")
+    fun listPaymentType(): List<PaymentType>{
+        return usecase.listPaymentType()
     }
 }
