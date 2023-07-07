@@ -6,7 +6,9 @@ import com.backend.blue_lock.core.payment.domain.entities.PaymentResponse
 import com.backend.blue_lock.core.payment.domain.entities.PaymentType
 import com.backend.blue_lock.core.payment.domain.usecase.PaymentUseCase
 import com.backend.blue_lock.core.shared.entities.BasicFilter
-import com.backend.blue_lock.core.payment.infraestructure.repository.PaymentRepository
+import com.backend.blue_lock.core.user.security.SystemUser
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,7 +25,13 @@ class Payment(
 ) {
     @PostMapping
     fun postPayment(@RequestBody payment: Payment): PaymentResponse {
-        return usecase.postPayment(payment)
+        val user = SecurityContextHolder.getContext().authentication.principal as SystemUser
+        return usecase.postPayment(payment, user.getUserData())
+    }
+
+    @DeleteMapping("/{paymentUUID}")
+    fun deletePayment(@PathVariable paymentUUID: UUID?): PaymentResponse {
+        return usecase.deletePayment(paymentUUID)
     }
 
     @GetMapping
@@ -34,7 +42,9 @@ class Payment(
         @RequestParam("orderBy", required = false, defaultValue = "uuid") orderBy: String?,
         @RequestParam("filter", required = false) filter: List<BasicFilter>?
     ): PaymentListResponse {
+        val user = SecurityContextHolder.getContext().authentication.principal as SystemUser
         return usecase.listPayments(
+            user.getUserData(),
             page,
             size,
             sortBy,

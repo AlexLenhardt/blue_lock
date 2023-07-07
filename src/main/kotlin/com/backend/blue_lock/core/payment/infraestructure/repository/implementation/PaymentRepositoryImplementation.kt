@@ -4,23 +4,24 @@ import com.backend.blue_lock.core.payment.domain.entities.Payment
 import com.backend.blue_lock.core.payment.domain.entities.PaymentType
 import com.backend.blue_lock.core.payment.infraestructure.repository.PaymentRepository
 import com.backend.blue_lock.core.payment.infraestructure.repository.database.PaymentDatabase
-import com.backend.blue_lock.core.payment.infraestructure.repository.database.PaymentDatabase.innerJoin
-import com.backend.blue_lock.core.payment.infraestructure.repository.database.PaymentDatabase.paymentType
 import com.backend.blue_lock.core.payment.infraestructure.repository.database.PaymentTypeDatabase
 import com.backend.blue_lock.core.payment.infraestructure.repository.database.withPaymentFilters
 import com.backend.blue_lock.core.shared.entities.BasicFilter
+import com.backend.blue_lock.core.shared.entities.EnumStatus
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
 class PaymentRepositoryImplementation : PaymentRepository {
-    override fun createPayment(payment: Payment) {
+    override fun createPayment(payment: Payment, userUUID: UUID) {
         transaction {
             PaymentDatabase.insert {
                 it[this.uuid] = payment.uuid!!
+                it[this.userUUID] = userUUID
                 it[this.paymentType] = payment.type!!.uuid!!
                 it[this.date] = payment.date!!
                 it[this.value] = payment.value!!
@@ -63,6 +64,7 @@ class PaymentRepositoryImplementation : PaymentRepository {
     }
 
     override fun listPayments(
+        userUUID: UUID,
         page: Int,
         size: Int,
         sortBy: String?,
@@ -81,7 +83,10 @@ class PaymentRepositoryImplementation : PaymentRepository {
                     PaymentTypeDatabase.uuid,
                     PaymentTypeDatabase.code,
                 )
-                .selectAll()
+                .select(
+                    (PaymentDatabase.userUUID eq userUUID) and
+                            (PaymentDatabase.statusCode neq EnumStatus.Deleted.value)
+                )
                 .limit(size, offset = (((page - 1) * size).toLong()))
                 .orderBy(
                     when (sortBy) {
@@ -113,11 +118,11 @@ class PaymentRepositoryImplementation : PaymentRepository {
         }
     }
 
-    override fun countPayments(basicFilter: List<BasicFilter>?): Int {
+    override fun countPayments(basicFilter: List<BasicFilter>?, userUUID: UUID): Int {
         return transaction {
             PaymentDatabase
                 .innerJoin(PaymentTypeDatabase, { paymentType }, { uuid })
-                .selectAll()
+                .select(PaymentDatabase.userUUID eq userUUID)
                 .withPaymentFilters(basicFilter)
                 .count()
                 .toInt()
@@ -131,6 +136,16 @@ class PaymentRepositoryImplementation : PaymentRepository {
                 .map {
                     it.toPaymentType()
                 }
+        }
+    }
+
+    override fun deletePayment(paymentUUID: UUID) {
+        transaction {
+            PaymentDatabase.update({
+                PaymentDatabase.uuid eq paymentUUID
+            }) {
+                it[this.statusCode] = EnumStatus.Deleted.value
+            }
         }
     }
 }

@@ -2,6 +2,8 @@ package com.backend.blue_lock.core.payment.infraestructure.repository.database
 
 import com.backend.blue_lock.core.shared.utils.Utils
 import com.backend.blue_lock.core.shared.entities.BasicFilter
+import com.backend.blue_lock.core.shared.entities.EnumStatus
+import com.backend.blue_lock.core.user.infraestructure.repository.database.UserTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.javatime.CurrentDateTime
 import org.jetbrains.exposed.sql.javatime.date
@@ -10,11 +12,12 @@ import java.util.*
 
 object PaymentDatabase : Table("payments") {
     val uuid = uuid("uuid").uniqueIndex()
+    val userUUID = uuid("user_uuid").references(UserTable.uuid)
     val date = date("date")
     val value = double("value")
     val paymentType = uuid("payment_type").references(PaymentTypeDatabase.uuid)
     val description = text("description").nullable()
-    val statusCode = integer("status_code").default(0)
+    val statusCode = integer("status_code").default(EnumStatus.Created.value)
     val modifiedAt = datetime("modified_at").defaultExpression(CurrentDateTime)
     val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
 

@@ -1,5 +1,6 @@
 package com.backend.blue_lock.core.user.infraestructure.repository.database
 
+import com.backend.blue_lock.core.shared.entities.EnumStatus
 import org.jetbrains.exposed.sql.*
 import com.backend.blue_lock.core.user.domain.usecases.response.UserFilter
 import org.jetbrains.exposed.sql.Table
@@ -38,7 +39,7 @@ object UserTypeTable : Table("user_type") {
     val uuid = uuid("uuid")
     val label = varchar("label", 60)
     val code = integer("code").uniqueIndex()
-    val statusCode = integer("status_code").default(0)
+    val statusCode = integer("status_code").default(EnumStatus.Created.value)
     val modifiedAt = datetime("modified_at").defaultExpression(CurrentDateTime)
     val createAt = datetime("created_at").defaultExpression(CurrentDateTime)
 

@@ -10,6 +10,7 @@ import com.backend.blue_lock.core.payment.domain.exception.POST_PAYMENT_ERROR
 import com.backend.blue_lock.core.payment.domain.usecase.PaymentUseCase
 import com.backend.blue_lock.core.payment.infraestructure.repository.PaymentRepository
 import com.backend.blue_lock.core.shared.entities.BasicFilter
+import com.backend.blue_lock.core.user.domain.entities.User
 import org.springframework.stereotype.Service
 import com.github.f4b6a3.uuid.UuidCreator
 import org.slf4j.LoggerFactory
@@ -24,7 +25,7 @@ class PaymentUseCaseImplementation(
         private val logger = LoggerFactory.getLogger(PaymentUseCaseImplementation::class.java)
     }
 
-    override fun postPayment(payment: Payment): PaymentResponse {
+    override fun postPayment(payment: Payment, user: User): PaymentResponse {
         return try {
             if (payment.type != null && payment.type?.code != 0) {
                 payment.type = repository.getPaymentTypeByCode(payment.type!!.code!!)
@@ -37,7 +38,7 @@ class PaymentUseCaseImplementation(
                 repository.updatePayment(payment)
             } else {
                 payment.uuid = UuidCreator.getTimeOrdered()
-                repository.createPayment(payment)
+                repository.createPayment(payment, user.uuid!!)
             }
 
             PaymentResponse(payment = payment)
@@ -61,6 +62,7 @@ class PaymentUseCaseImplementation(
     }
 
     override fun listPayments(
+        user: User,
         page: Int?,
         size: Int?,
         sortBy: String?,
@@ -69,7 +71,7 @@ class PaymentUseCaseImplementation(
     ): PaymentListResponse {
         var sizeList = size
         var actualPage = page
-        val numberOfRegister: Int = repository.countPayments(basicFilter)
+        val numberOfRegister: Int = repository.countPayments(basicFilter, user.uuid!!)
         var numberPages = 0
 
         if (sizeList == null) {
@@ -85,6 +87,7 @@ class PaymentUseCaseImplementation(
         return try {
             PaymentListResponse(
                 payments = repository.listPayments(
+                    user.uuid,
                     actualPage,
                     sizeList,
                     sortBy,
@@ -99,5 +102,20 @@ class PaymentUseCaseImplementation(
 
     override fun listPaymentType(): List<PaymentType> {
         return repository.listPaymentType()
+    }
+
+    override fun deletePayment(paymentUUID: UUID?): PaymentResponse {
+        if (paymentUUID == null) {
+            return PaymentResponse(error = PAYMENT_NOT_INFORMED)
+        }
+
+        try {
+            repository.deletePayment(paymentUUID)
+        } catch (e: Exception) {
+            logger.error("PAYMENT_DELETE_ERROR", e)
+            return PaymentResponse(error = PAYMENT_DATABASE_ERROR)
+        }
+
+        return PaymentResponse()
     }
 }
