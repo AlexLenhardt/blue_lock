@@ -23,6 +23,7 @@ object PaymentDatabase : Table("payments") {
 
     init {
         PrimaryKey(uuid)
+
     }
 }
 

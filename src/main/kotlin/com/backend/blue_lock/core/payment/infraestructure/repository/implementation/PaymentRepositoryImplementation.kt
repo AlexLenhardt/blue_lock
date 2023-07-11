@@ -11,8 +11,10 @@ import com.backend.blue_lock.core.shared.entities.EnumStatus
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.neq
+import org.jetbrains.exposed.sql.javatime.CurrentDateTime
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 import java.util.*
 
 @Repository
@@ -39,6 +41,7 @@ class PaymentRepositoryImplementation : PaymentRepository {
                 it[this.date] = payment.date!!
                 it[this.value] = payment.value!!
                 it[this.description] = payment.description
+                it[this.modifiedAt] = CurrentDateTime
             }
         }
     }
@@ -96,7 +99,7 @@ class PaymentRepositoryImplementation : PaymentRepository {
                             "date" -> PaymentDatabase.date to SortOrder.DESC
                             "type" -> PaymentDatabase.paymentType to SortOrder.DESC
 
-                            else -> PaymentDatabase.createdAt to SortOrder.DESC
+                            else -> PaymentDatabase.modifiedAt to SortOrder.DESC
                         }
 
                         "asc" -> when (orderBy) {
@@ -105,7 +108,7 @@ class PaymentRepositoryImplementation : PaymentRepository {
                             "date" -> PaymentDatabase.date to SortOrder.ASC
                             "type" -> PaymentDatabase.paymentType to SortOrder.ASC
 
-                            else -> PaymentDatabase.createdAt to SortOrder.ASC
+                            else -> PaymentDatabase.modifiedAt to SortOrder.ASC
                         }
 
                         else -> error("VALUE NOT FOUND")
@@ -122,7 +125,8 @@ class PaymentRepositoryImplementation : PaymentRepository {
         return transaction {
             PaymentDatabase
                 .innerJoin(PaymentTypeDatabase, { paymentType }, { uuid })
-                .select(PaymentDatabase.userUUID eq userUUID)
+                .select((PaymentDatabase.userUUID eq userUUID) and
+                        (PaymentDatabase.statusCode neq EnumStatus.Deleted.value))
                 .withPaymentFilters(basicFilter)
                 .count()
                 .toInt()
