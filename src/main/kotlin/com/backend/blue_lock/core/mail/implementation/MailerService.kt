@@ -28,7 +28,6 @@ class MailerService(
             helper.setSubject(subject)
             helper.setTo(to)
             if (cc.trim() != "") helper.setCc(cc)
-            helper.setBcc("bruno.fernandes@lince.com.br")
             helper.setText(message, true)
 
             mailSender.send(helper.mimeMessage)
