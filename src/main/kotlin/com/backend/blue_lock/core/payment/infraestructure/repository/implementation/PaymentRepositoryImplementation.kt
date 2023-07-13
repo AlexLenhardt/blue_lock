@@ -122,7 +122,10 @@ class PaymentRepositoryImplementation : PaymentRepository {
         return transaction {
             PaymentDatabase
                 .innerJoin(PaymentTypeDatabase, { paymentType }, { uuid })
-                .select(PaymentDatabase.userUUID eq userUUID)
+                .select(
+                    (PaymentDatabase.userUUID eq userUUID) and 
+                    (PaymentDatabase.statusCode neq EnumStatus.Deleted.value )
+                )
                 .withPaymentFilters(basicFilter)
                 .count()
                 .toInt()
