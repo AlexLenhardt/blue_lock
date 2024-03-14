@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import org.slf4j.LoggerFactory
 import com.backend.blue_lock.modules.account.domain.entities.ListAccountsResponse
 import com.backend.blue_lock.core.shared.entities.BasicFilter
+import com.backend.blue_lock.core.user.domain.entities.User
 import java.util.UUID
 
 @Service
@@ -20,17 +21,17 @@ class AccountUseCaseImplementation(
         private val logger = LoggerFactory.getLogger(AccountUseCaseImplementation::class.java)
     }
 
-    override fun save(account: Account): AccountResponse {
+    override fun save(account: Account, user: User): AccountResponse {
         if (account.label.isNullOrBlank()) {
             return AccountResponse(error = ACCOUNT_LABEL_EMPTY)
         }
 
         return try {
             if (account.uuid != null){
-                repository.update(account)
+                repository.update(account, user.uuid!!)
             }else{
                 account.uuid = UuidCreator.getTimeOrdered()
-                repository.create(account)
+                repository.create(account, user.uuid!!)
             }
 
             AccountResponse(account = account)
@@ -40,21 +41,31 @@ class AccountUseCaseImplementation(
         }
     }
 
-    override fun list(): ListAccountsResponse{
+    override fun list(user: User): ListAccountsResponse{
         return try{
-            ListAccountsResponse(accounts = repository.list())
+            ListAccountsResponse(accounts = repository.list(user.uuid!!))
         }catch(e: Exception){
             logger.error("Error during list accounts", e)
             ListAccountsResponse(error = LIST_ACCOUNTS_ERROR)
         }
     }
 
-    override fun get(uuid: UUID): AccountResponse {
+    override fun get(uuid: UUID, user: User): AccountResponse {
         return try{
-            AccountResponse(account = repository.get(uuid))
+            AccountResponse(account = repository.get(uuid, user.uuid!!))
         }catch(e: Exception){
             logger.error("Error during get accout", e)
             AccountResponse(error = GET_ACCOUNT_ERROR)
+        }
+    }
+
+    override fun delete(uuid: UUID, user: User): AccountResponse {
+        return try{
+            repository.delete(uuid, user.uuid!!)
+            AccountResponse()
+        }catch(e: Exception){
+            logger.error("Error during delete accout", e)
+            AccountResponse(error = DELETE_ACCOUNT_ERROR)
         }
     }
 }

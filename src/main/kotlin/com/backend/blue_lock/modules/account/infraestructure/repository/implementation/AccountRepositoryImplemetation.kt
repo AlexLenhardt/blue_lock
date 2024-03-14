@@ -13,29 +13,43 @@ import java.util.UUID
 
 @Repository
 class AccountRepositoryImplementation: AccountRepository{
-    override fun update(account: Account) {
+    override fun delete(uuid: UUID, userUUID: UUID){
+        transaction {
+            AccountDatabase.deleteWhere{ 
+                (AccountDatabase.uuid eq uuid) and 
+                (AccountDatabase.userUUID eq userUUID)}
+        }
+    }
+
+    override fun update(account: Account, userUUID: UUID) {
         transaction {
             AccountDatabase.update({
-                AccountDatabase.uuid eq account.uuid!!
+                (AccountDatabase.uuid eq account.uuid!!) and 
+                (AccountDatabase.userUUID eq userUUID)
             }) {
                 it[this.label] = account.label!!
             }
         }
     }
 
-    override fun create(account: Account) {
+    override fun create(account: Account, userUUID: UUID) {
         transaction {
             AccountDatabase.insert{
                 it[AccountDatabase.uuid] = account.uuid!!
                 it[AccountDatabase.label] = account.label!!
+                it[AccountDatabase.userUUID] = userUUID
             }
         }
     }
 
-    override fun list(): List<Account> {
+    override fun list(userUUID: UUID): List<Account> {
         return transaction {
             AccountDatabase
-            .select { AccountDatabase.statusCode neq EnumStatus.Deleted.value }
+            .select { 
+                (AccountDatabase.statusCode neq EnumStatus.Deleted.value) and
+                (AccountDatabase.userUUID eq userUUID)
+            }
+            .orderBy(AccountDatabase.createAt, SortOrder.DESC)
             .map {
                 Account(
                     uuid = it[AccountDatabase.uuid],
@@ -45,10 +59,13 @@ class AccountRepositoryImplementation: AccountRepository{
         }
     }
 
-    override fun get(uuid: UUID): Account? {
+    override fun get(uuid: UUID, userUUID: UUID): Account? {
         return transaction {
             AccountDatabase
-                .select{ AccountDatabase.uuid eq uuid }
+                .select{ 
+                    (AccountDatabase.uuid eq uuid) and
+                    (AccountDatabase.userUUID eq userUUID)
+                 }
                 .firstOrNull()
                 ?.let{
                     Account(

@@ -15,4 +15,6 @@ interface AccountWebService {
     fun list(): ListAccountsResponse
 
     fun get(uuid: UUID): AccountResponse
+
+    fun delete(uuid: UUID): AccountResponse
 }

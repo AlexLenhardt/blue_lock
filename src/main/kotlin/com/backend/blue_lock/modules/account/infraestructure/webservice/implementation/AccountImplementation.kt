@@ -8,6 +8,8 @@ import com.backend.blue_lock.modules.account.infraestructure.webservice.AccountW
 import org.springframework.web.bind.annotation.*
 import com.backend.blue_lock.core.shared.entities.BasicFilter
 import java.util.UUID
+import org.springframework.security.core.context.SecurityContextHolder
+import com.backend.blue_lock.core.user.security.SystemUser
 
 @RestController
 @RequestMapping("/account")
@@ -17,18 +19,33 @@ class AccountWebServiceImplemetation(
     
     @PostMapping
     override fun save(@RequestBody account: Account): AccountResponse {
-        return usecase.save(account)
+        val user = SecurityContextHolder.getContext().authentication.principal as SystemUser
+
+        return usecase.save(account, user.getUserData())
     }
 
     @GetMapping
     override fun list(): ListAccountsResponse {
-        return usecase.list()
+        val user = SecurityContextHolder.getContext().authentication.principal as SystemUser
+
+        return usecase.list(user.getUserData())
     }
 
     @GetMapping("/{uuid}")
     override fun get(
         @PathVariable uuid: UUID
     ): AccountResponse {
-        return usecase.get(uuid)
+        val user = SecurityContextHolder.getContext().authentication.principal as SystemUser
+    
+        return usecase.get(uuid, user.getUserData())
+    }
+
+    @DeleteMapping("/{uuid}")
+    override fun delete(
+        @PathVariable uuid: UUID
+    ): AccountResponse {
+        val user = SecurityContextHolder.getContext().authentication.principal as SystemUser
+    
+        return usecase.delete(uuid, user.getUserData())
     }
 }

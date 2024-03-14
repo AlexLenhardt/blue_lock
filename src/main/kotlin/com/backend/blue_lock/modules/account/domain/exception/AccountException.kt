@@ -10,6 +10,8 @@ val ACCOUNT_LABEL_EMPTY = AccountException("ACCOUNT_LABEL_EMPTY", "Informe um no
 
 val POST_ACCOUNT_ERROR = AccountException("POST_ACCOUNT_ERROR", "Erro ao cadastrar conta")
 
+val DELETE_ACCOUNT_ERROR = AccountException("DELETE_ACCOUNT_ERROR", "Erro ao excluir conta")
+
 class AccountException(
     code: String,
     description: String
