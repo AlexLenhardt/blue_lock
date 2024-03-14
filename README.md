@@ -84,3 +84,5 @@ substituido pelo valor da variavel de mesmo nome, definido no arquivo `./applica
 
 Com o arquivo de jar, basta acessar o servidor DEVSERVER, interromper o serviço `MIAMI: Servidor homologação MicroERP`,
 renomear o arquivo para `miami.jar` e substituir o arquivo de mesmo nome, existente na pasta `C:\testing\miami`.
+
+INSERT INTO "user" (authentication_record, contact, created_at, email, is_active, last_password_modified, modified_at, "name", "password", password_validate, update_password, user_type, uuid) VALUES ('alex.lenhardt', '123456789', (CURRENT_TIMESTAMP), 'alex.lenhardt@outlook.com', TRUE, NULL, (CURRENT_TIMESTAMP), 'Alex Lenhardt', '$2a$10$4.4SYyFa3SQ2lVciua9xOOQgAOTCt8jeb0DHMvS3oO/pRG2YDE8WO', NULL, TRUE, '5a9e1ee3-f39b-445d-a0e5-11e687ac6cec', '47d0adfc-65af-44bb-a061-f869f308d4bd')

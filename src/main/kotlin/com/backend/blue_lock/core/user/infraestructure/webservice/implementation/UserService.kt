@@ -36,10 +36,10 @@ class UserService(
     @PostMapping("/updatePassword")
     override fun updatePassword(@RequestBody request: PasswordChangeRequest): PasswordChangeResponse {
         return try {
-            val user = SecurityContextHolder.getContext().authentication.principal
+           val user = SecurityContextHolder.getContext().authentication.principal as SystemUser
 
-            authenticationManager
-                .authenticate(UsernamePasswordAuthenticationToken((user as SystemUser).uuid, request.currentPassword))
+           authenticationManager
+               .authenticate(UsernamePasswordAuthenticationToken((user).uuid, request.currentPassword))
 
             securityUseCase.updateUserPassword(request)
         } catch (e: AuthenticationException) {

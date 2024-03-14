@@ -68,12 +68,12 @@ data class UserType(
     /**
      * The external identifier to user type
      */
-    val code: Int,
+    val code: Int?,
 
     /**
      * The label of the type
      */
-    val label: String,
+    val label: String?,
 )
 
 enum class EnumUserType(val value: Int) {
