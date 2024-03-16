@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-
+import org.springframework.http.HttpMethod
 
 @Configuration
 @EnableMethodSecurity
@@ -79,6 +79,7 @@ class ServerSecurityConfiguration {
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/web/**").permitAll()
                     .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
                     .anyRequest().authenticated()
             }
             .authenticationProvider(authenticationProvider())

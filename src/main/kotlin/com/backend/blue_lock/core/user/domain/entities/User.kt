@@ -18,7 +18,7 @@ data class User(
     /**
      * The type of the user(Owner, admin, default)
      */
-    val userType: UserType?,
+    var userType: UserType?,
 
     /**
      * If is true, user is active else user is inactive
@@ -63,7 +63,7 @@ data class UserType(
     /**
      * The Universally Unique Identifier of this type
      */
-    val uuid: UUID,
+    val uuid: UUID? = null,
 
     /**
      * The external identifier to user type
@@ -73,11 +73,11 @@ data class UserType(
     /**
      * The label of the type
      */
-    val label: String?,
+    val label: String? = null,
 )
 
 enum class EnumUserType(val value: Int) {
     Owner(1),
     Admin(2),
-    Employee(3),
+    User(3),
 }

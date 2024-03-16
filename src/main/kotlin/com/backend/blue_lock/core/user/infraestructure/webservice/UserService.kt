@@ -15,6 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam
  */
 interface UserService {
     /**
+     * Allow user t
+     */
+    fun autoRegister(user: User): UserResponse?
+
+
+    /**
      * Get the user by some identifier
      *
      * @param userID can be any identifier of user(uuid, authenticationRecord or email).

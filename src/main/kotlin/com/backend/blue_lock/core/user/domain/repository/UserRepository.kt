@@ -29,7 +29,7 @@ interface UserRepository {
     /**
      * Get a specific user type, used to verify if a user type exist
      */
-    fun getUserType(userType: UUID): UserType?
+    fun getUserType(userType: UserType): UserType?
 
     /**
      * List all user types in the system

@@ -76,7 +76,7 @@ class SecurityRepository : SecurityRepository {
                 it[email] = user.email
                 it[isActive] = user.isActive
                 it[password] = user.passwordHash!!
-                it[userType] = user.userType!!.uuid
+                it[userType] = user.userType!!.uuid!!
                 it[updatePassword] = true
             }
         }

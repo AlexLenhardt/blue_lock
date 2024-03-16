@@ -28,8 +28,33 @@ class UserRepository : UserRepository {
         (UserTable innerJoin UserTypeTable).select { UserTable.email eq email }.firstOrNull()?.toUser()
     }
 
-    override fun getUserType(userType: UUID): UserType? = transaction {
-        UserTypeTable.select { UserTypeTable.uuid eq userType }.firstOrNull()?.toUserType()
+    override fun getUserType(userType: UserType): UserType? {
+        if (userType.uuid != null){
+            return try {
+                transaction{
+                    UserTypeTable.select{
+                        (UserTypeTable.uuid eq userType.uuid)
+                    }.firstOrNull()
+                    ?.toUserType()
+                }
+            } catch(e: Exception) {
+                null
+            }
+        }else if(userType.code != null){
+            return try {
+                transaction{
+                    UserTypeTable.select{
+                        (UserTypeTable.code eq userType.code)
+                    }.firstOrNull()
+                    ?.toUserType()
+                }
+            } catch(e: Exception) {
+                null
+            }
+        }
+        
+
+        return null
     }
 
     override fun listUserType(): List<UserType> = transaction {
@@ -43,7 +68,7 @@ class UserRepository : UserRepository {
             it[authenticationRecord] = user.authenticationRecord!!
             it[name] = user.name!!
             it[email] = user.email
-            it[userType] = user.userType!!.uuid
+            it[userType] = user.userType!!.uuid!!
             it[contact] = user.contact
             it[isActive] = user.isActive
         }

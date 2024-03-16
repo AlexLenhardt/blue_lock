@@ -64,15 +64,18 @@ class UserUseCase(
         }
 
         try {
+            println(user.userType)
             if (user.userType == null) {
                 return UserResponse(error = ERROR_USER_TYPE_NOT_FOUND)
             }
 
-            val userTypeExist = userRepository.getUserType(user.userType.uuid) != null
-            if (!userTypeExist) {
+            val newUserType = userRepository.getUserType(user.userType!!)
+            if (newUserType == null) {
                 return UserResponse(error = ERROR_USER_TYPE_NOT_FOUND)
             }
+            user.userType = newUserType
         } catch (e: Exception) {
+            println(e.message)
             return UserResponse(error = USER_STORAGE_ERROR)
         }
 
