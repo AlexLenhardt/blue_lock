@@ -4,11 +4,14 @@ import com.backend.blue_lock.modules.payment.domain.entities.Payment
 import com.backend.blue_lock.modules.payment.domain.entities.PaymentListResponse
 import com.backend.blue_lock.modules.payment.domain.entities.PaymentResponse
 import com.backend.blue_lock.modules.payment.domain.entities.PaymentType
+import com.backend.blue_lock.modules.payment.domain.entities.PaymentTypeResponse
 import com.backend.blue_lock.core.shared.entities.BasicFilter
 import com.backend.blue_lock.core.user.domain.entities.User
 import java.util.UUID
 
 interface PaymentUseCase {
+    fun postPaymentType(paymentType: PaymentType): PaymentTypeResponse
+    
     fun getPayment(paymentUUID: UUID?): PaymentResponse 
 
     fun postPayment(payment: Payment, user: User): PaymentResponse

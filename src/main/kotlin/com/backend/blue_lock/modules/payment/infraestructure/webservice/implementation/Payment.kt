@@ -4,6 +4,7 @@ import com.backend.blue_lock.modules.payment.domain.entities.Payment
 import com.backend.blue_lock.modules.payment.domain.entities.PaymentListResponse
 import com.backend.blue_lock.modules.payment.domain.entities.PaymentResponse
 import com.backend.blue_lock.modules.payment.domain.entities.PaymentType
+import com.backend.blue_lock.modules.payment.domain.entities.PaymentTypeResponse
 import com.backend.blue_lock.modules.payment.domain.usecase.PaymentUseCase
 import com.backend.blue_lock.core.shared.entities.BasicFilter
 import com.backend.blue_lock.core.user.security.SystemUser
@@ -17,12 +18,18 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.PathVariable
 import java.util.UUID
+import kotlin.collections.emptyList
 
 @RestController
 @RequestMapping("/payment")
 class Payment(
     val usecase: PaymentUseCase
 ) {
+    @PostMapping
+    fun postPaymentType(@RequestBody paymentType: PaymentType): PaymentTypeResponse {
+        val user = SecurityContextHolder.getContext().authentication.principal as SystemUser
+        return usecase.postPaymentType(paymentType, user.getUserData())
+    }
     @PostMapping
     fun postPayment(@RequestBody payment: Payment): PaymentResponse {
         val user = SecurityContextHolder.getContext().authentication.principal as SystemUser

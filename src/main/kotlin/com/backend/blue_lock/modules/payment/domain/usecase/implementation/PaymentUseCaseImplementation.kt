@@ -25,6 +25,8 @@ class PaymentUseCaseImplementation(
         private val logger = LoggerFactory.getLogger(PaymentUseCaseImplementation::class.java)
     }
 
+    override fun paymentP
+
     override fun postPayment(payment: Payment, user: User): PaymentResponse {
         return try {
             if (payment.type != null && payment.type?.code != 0) {
