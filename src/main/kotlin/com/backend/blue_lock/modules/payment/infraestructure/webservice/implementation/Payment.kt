@@ -25,11 +25,12 @@ import kotlin.collections.emptyList
 class Payment(
     val usecase: PaymentUseCase
 ) {
-    @PostMapping
+    @PostMapping("/type")
     fun postPaymentType(@RequestBody paymentType: PaymentType): PaymentTypeResponse {
         val user = SecurityContextHolder.getContext().authentication.principal as SystemUser
-        return usecase.postPaymentType(paymentType, user.getUserData())
+        return usecase.postPaymentType(paymentType, user.getUserData().uuid!!)
     }
+    
     @PostMapping
     fun postPayment(@RequestBody payment: Payment): PaymentResponse {
         val user = SecurityContextHolder.getContext().authentication.principal as SystemUser
@@ -67,6 +68,7 @@ class Payment(
 
     @GetMapping("/type")
     fun listPaymentType(): List<PaymentType>{
-        return usecase.listPaymentType()
+        val user = SecurityContextHolder.getContext().authentication.principal as SystemUser
+        return usecase.listPaymentType(user.uuid)
     }
 }

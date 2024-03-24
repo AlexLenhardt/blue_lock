@@ -1,16 +1,12 @@
 package com.backend.blue_lock.modules.payment.domain.usecase.implementation
 
-import com.backend.blue_lock.modules.payment.domain.entities.Payment
-import com.backend.blue_lock.modules.payment.domain.entities.PaymentListResponse
-import com.backend.blue_lock.modules.payment.domain.entities.PaymentResponse
-import com.backend.blue_lock.modules.payment.domain.entities.PaymentType
+import com.backend.blue_lock.modules.payment.domain.entities.*
 import com.backend.blue_lock.modules.payment.domain.exception.*
-import com.backend.blue_lock.modules.payment.domain.exception.PAYMENT_DATABASE_ERROR
-import com.backend.blue_lock.modules.payment.domain.exception.POST_PAYMENT_ERROR
 import com.backend.blue_lock.modules.payment.domain.usecase.PaymentUseCase
 import com.backend.blue_lock.modules.payment.infraestructure.repository.PaymentRepository
 import com.backend.blue_lock.core.shared.entities.BasicFilter
 import com.backend.blue_lock.core.user.domain.entities.User
+import com.backend.blue_lock.core.user.domain.errors.USER_EMAIL_EXIST
 import org.springframework.stereotype.Service
 import com.github.f4b6a3.uuid.UuidCreator
 import org.slf4j.LoggerFactory
@@ -25,12 +21,27 @@ class PaymentUseCaseImplementation(
         private val logger = LoggerFactory.getLogger(PaymentUseCaseImplementation::class.java)
     }
 
-    override fun paymentP
+    override fun postPaymentType(paymentType: PaymentType, userUUID: UUID): PaymentTypeResponse {
+        if (paymentType.label == "") {
+            return PaymentTypeResponse(error = PAYMENT_TYPE_LABEL_NOT_INFORMED)
+        }
+
+        if (paymentType.uuid != null && repository.getPaymentType(paymentType.uuid!!, userUUID) != null){
+            if (repository.updatePaymentType(paymentType, userUUID) != null){
+                return PaymentTypeResponse(paymentType = paymentType)
+            }
+            return PaymentTypeResponse(error = POST_PAYMENT_TYPE_ERROR)
+        }
+        
+        paymentType.uuid = UuidCreator.getTimeOrdered()
+        repository.createPaymentType(paymentType, userUUID)
+        return PaymentTypeResponse(paymentType)
+    }
 
     override fun postPayment(payment: Payment, user: User): PaymentResponse {
         return try {
-            if (payment.type != null && payment.type?.code != 0) {
-                payment.type = repository.getPaymentTypeByCode(payment.type!!.code!!)
+            if (payment.type != null) {
+                payment.type = repository.getPaymentType(payment.type!!.uuid!!, user.uuid!!)
                     ?: return PaymentResponse(error = PAYMENT_TYPE_NOT_INFORMED)
             } else {
                 return PaymentResponse(error = PAYMENT_TYPE_NOT_INFORMED)
@@ -102,8 +113,8 @@ class PaymentUseCaseImplementation(
         }
     }
 
-    override fun listPaymentType(): List<PaymentType> {
-        return repository.listPaymentType()
+    override fun listPaymentType(userUUID: UUID): List<PaymentType> {
+        return repository.listPaymentType(userUUID)
     }
 
     override fun deletePayment(paymentUUID: UUID?): PaymentResponse {

@@ -10,7 +10,7 @@ import com.backend.blue_lock.core.user.domain.entities.User
 import java.util.UUID
 
 interface PaymentUseCase {
-    fun postPaymentType(paymentType: PaymentType): PaymentTypeResponse
+    fun postPaymentType(paymentType: PaymentType, userUUID: UUID): PaymentTypeResponse
     
     fun getPayment(paymentUUID: UUID?): PaymentResponse 
 
@@ -25,7 +25,7 @@ interface PaymentUseCase {
         basicFilter: List<BasicFilter>?
     ): PaymentListResponse
 
-    fun listPaymentType(): List<PaymentType>
+    fun listPaymentType(userUUID: UUID): List<PaymentType>
 
     fun deletePayment(paymentUUID: UUID?): PaymentResponse
 }

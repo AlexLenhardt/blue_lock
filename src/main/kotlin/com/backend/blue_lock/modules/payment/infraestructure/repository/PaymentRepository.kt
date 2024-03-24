@@ -6,13 +6,17 @@ import com.backend.blue_lock.core.shared.entities.BasicFilter
 import java.util.*
 
 interface PaymentRepository {
+    fun createPaymentType(paymentType: PaymentType, userUUID: UUID): PaymentType?
+    
+    fun updatePaymentType(paymentType: PaymentType, userUUID: UUID): PaymentType?
+
     fun createPayment(payment: Payment, userUUID: UUID)
 
     fun updatePayment(payment: Payment)
 
     fun getPayment(uuid: UUID): Payment?
 
-    fun getPaymentTypeByCode(code: Int): PaymentType?
+    fun getPaymentType(uuid: UUID, userUUID: UUID): PaymentType?
 
     fun listPayments(
         userUUID: UUID,
@@ -25,7 +29,7 @@ interface PaymentRepository {
 
     fun countPayments(basicFilter: List<BasicFilter>?, userUUID: UUID): Int
 
-    fun listPaymentType(): List<PaymentType>
+    fun listPaymentType(userUUID: UUID): List<PaymentType>
 
     fun deletePayment(paymentUUID: UUID)
 }

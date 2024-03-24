@@ -4,6 +4,6 @@ import java.util.*
 
 class PaymentType(
     var uuid: UUID? = null,
-    var code: Int? = null,
+    var userUUID: UUID? = null,
     var label: String? = null
 )

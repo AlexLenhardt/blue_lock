@@ -19,6 +19,31 @@ import java.util.*
 
 @Repository
 class PaymentRepositoryImplementation : PaymentRepository {
+    override fun createPaymentType(paymentType: PaymentType, userUUID: UUID): PaymentType?{
+        transaction{
+            PaymentTypeDatabase.insert{
+                it[this.uuid] = paymentType.uuid!!
+                it[this.userUUID] = userUUID
+                it[this.label] = paymentType.label!!
+            }
+        }
+
+        return paymentType
+    }
+
+    override fun updatePaymentType(paymentType: PaymentType, userUUID: UUID): PaymentType{
+        transaction{ 
+            PaymentTypeDatabase.update({
+                (PaymentTypeDatabase.uuid eq paymentType.uuid!!) and
+                (PaymentTypeDatabase.userUUID eq userUUID)
+            }) { 
+                it[this.label] = paymentType.label!!
+             }
+         }
+
+         return paymentType
+    }
+
     override fun createPayment(payment: Payment, userUUID: UUID) {
         transaction {
             PaymentDatabase.insert {
@@ -58,10 +83,13 @@ class PaymentRepositoryImplementation : PaymentRepository {
         }
     }
 
-    override fun getPaymentTypeByCode(code: Int): PaymentType? {
+    override fun getPaymentType(uuid: UUID, userUUID: UUID): PaymentType? {
         return transaction {
             PaymentTypeDatabase
-                .select(PaymentTypeDatabase.code eq code)
+                .select(
+                    (PaymentTypeDatabase.uuid eq uuid) and 
+                    (PaymentTypeDatabase.userUUID eq userUUID)
+                )
                 .firstOrNull()?.toPaymentType()
         }
     }
@@ -84,7 +112,6 @@ class PaymentRepositoryImplementation : PaymentRepository {
                     PaymentDatabase.value,
                     PaymentTypeDatabase.label,
                     PaymentTypeDatabase.uuid,
-                    PaymentTypeDatabase.code,
                 )
                 .select(
                     (PaymentDatabase.userUUID eq userUUID) and
@@ -135,10 +162,12 @@ class PaymentRepositoryImplementation : PaymentRepository {
         }
     }
 
-    override fun listPaymentType(): List<PaymentType> {
+    override fun listPaymentType(userUUID: UUID): List<PaymentType> {
         return transaction {
             PaymentTypeDatabase
-                .selectAll()
+                .select(
+                    PaymentTypeDatabase.userUUID eq userUUID
+                )
                 .map {
                     it.toPaymentType()
                 }
@@ -169,7 +198,7 @@ private fun ResultRow.toPayment(): Payment {
 private fun ResultRow.toPaymentType(): PaymentType {
     return PaymentType(
         uuid = this.getOrNull(PaymentTypeDatabase.uuid),
-        code = this.getOrNull(PaymentTypeDatabase.code),
+        userUUID = this.getOrNull(PaymentTypeDatabase.userUUID),
         label = this.getOrNull(PaymentTypeDatabase.label)
     )
 }

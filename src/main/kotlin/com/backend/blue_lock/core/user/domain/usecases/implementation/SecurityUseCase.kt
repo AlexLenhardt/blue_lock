@@ -52,7 +52,7 @@ class SecurityUseCase(
         return null
     }
 
-    override fun userRoles(user: User): List<String> {
+    override fun userRoles(user: User): List<String>         {
         return if (user.userType!!.code == EnumUserType.Owner.value)
             securityRepository.listOwnerRoles()
         else
