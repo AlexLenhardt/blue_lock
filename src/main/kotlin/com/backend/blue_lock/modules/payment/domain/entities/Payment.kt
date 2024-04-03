@@ -6,6 +6,7 @@ import com.backend.blue_lock.modules.payment.domain.entities.PaymentType
 
 data class Payment(
     var uuid: UUID? = null,
+    var accountUUID: UUID? = null,
     var date: LocalDate? = null,
     var value: Double? = null,
     var description: String? = null,

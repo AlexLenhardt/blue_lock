@@ -53,6 +53,7 @@ class PaymentRepositoryImplementation : PaymentRepository {
                 it[this.date] = payment.date!!
                 it[this.value] = payment.value!!
                 it[this.description] = payment.description
+                it[this.accountUUID] = payment.accountUUID!!
             }
         }
     }
@@ -67,6 +68,7 @@ class PaymentRepositoryImplementation : PaymentRepository {
                 it[this.value] = payment.value!!
                 it[this.description] = payment.description
                 it[this.modifiedAt] = CurrentDateTime
+                it[this.accountUUID] = payment.accountUUID!!
             }
         }
     }

@@ -51,7 +51,7 @@ class PaymentUseCaseImplementation(
                 repository.updatePayment(payment)
             } else {
                 payment.uuid = UuidCreator.getTimeOrdered()
-                repository.createPayment(payment, user.uuid!!)
+                repository.createPayment(payment, user.uuid)
             }
 
             PaymentResponse(payment = payment)

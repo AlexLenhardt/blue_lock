@@ -4,6 +4,7 @@ import com.backend.blue_lock.core.shared.utils.Utils
 import com.backend.blue_lock.core.shared.entities.BasicFilter
 import com.backend.blue_lock.core.shared.entities.EnumStatus
 import com.backend.blue_lock.core.user.infraestructure.repository.database.UserTable
+import com.backend.blue_lock.modules.account.infraestructure.repository.database.AccountDatabase
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.javatime.CurrentDateTime
 import org.jetbrains.exposed.sql.javatime.date
@@ -13,6 +14,7 @@ import java.util.*
 object PaymentDatabase : Table("payments") {
     val uuid = uuid("uuid").uniqueIndex()
     val userUUID = uuid("user_uuid").references(UserTable.uuid)
+    val accountUUID = uuid("account_uuid").references(AccountDatabase.uuid)
     val date = date("date")
     val value = double("value")
     val paymentType = uuid("payment_type").references(PaymentTypeDatabase.uuid)
