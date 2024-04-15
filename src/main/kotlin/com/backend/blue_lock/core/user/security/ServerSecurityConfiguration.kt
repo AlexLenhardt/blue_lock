@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.http.HttpMethod
+import org.springframework.security.config.Customizer
 
 @Configuration
 @EnableMethodSecurity
@@ -80,8 +81,11 @@ class ServerSecurityConfiguration {
                     .requestMatchers("/web/**").permitAll()
                     .requestMatchers("/auth/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
+                    .requestMatchers("/oauth2/authorization/google").permitAll()
                     .anyRequest().authenticated()
             }
+            .oauth2Login()
+            .and()
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter::class.java)
 
