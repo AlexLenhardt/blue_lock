@@ -7,4 +7,4 @@ class UserEmail(
     to: String,
     subject: String,
     body: String
-) : GenericMail("internationallince@gmail.com", to, subject, body)
+) : GenericMail("alexlenhardt07@gmail.com", to, subject, body)

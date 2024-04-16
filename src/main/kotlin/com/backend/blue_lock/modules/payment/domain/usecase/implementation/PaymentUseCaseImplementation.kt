@@ -64,7 +64,7 @@ class PaymentUseCaseImplementation(
     override fun getPayment(paymentUUID: UUID?): PaymentResponse {
         if (paymentUUID == null) {
             return PaymentResponse(error = PAYMENT_NOT_INFORMED)
-        }
+        } 
 
         return try {
             val payment = repository.getPayment(paymentUUID)

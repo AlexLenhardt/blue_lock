@@ -71,7 +71,7 @@ Comandos para instalação:
 
 ## Build de uma nova versão de homologação
 
-Para realizar o build de uma nova versão de homologação, basta executar script `homoloh.ps1`.
+Para realizar o build de uma nova versão de homologação, basta executar script `homolog.ps1`.
 
 Esse comando ira gerar o arquivo `./application/build/libs/application-{version}.jar`. O valor de `version`, é
 substituido pelo valor da variavel de mesmo nome, definido no arquivo `./application/build.gradle.kts`.

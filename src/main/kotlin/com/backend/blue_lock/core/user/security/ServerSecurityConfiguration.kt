@@ -56,10 +56,7 @@ class ServerSecurityConfiguration {
     fun corsConfigurationSource(): CorsConfigurationSource {
         return UrlBasedCorsConfigurationSource().apply {
             registerCorsConfiguration("/**", CorsConfiguration().apply {
-                allowedOrigins = listOf(
-                    "http://192.168.3.11:3000/",
-                    "http://192.168.3.11:9001/"
-                )
+                allowedOrigins = listOf("*")
                 allowedMethods = listOf("*")
                 allowCredentials = true
                 addAllowedHeader("*")
@@ -70,22 +67,21 @@ class ServerSecurityConfiguration {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf().disable().cors().and()
+            .oauth2Login()
+            .and()
             .exceptionHandling()
             .accessDeniedHandler(accessDeniedHandler)
             .authenticationEntryPoint(unauthorizedHandler).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeHttpRequests {
-                it
-                    .requestMatchers("/").permitAll()
-                    .requestMatchers("/swagger-ui/**").permitAll()
-                    .requestMatchers("/web/**").permitAll()
-                    .requestMatchers("/auth/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
-                    .requestMatchers("/oauth2/authorization/google").permitAll()
-                    .anyRequest().authenticated()
-            }
-            .oauth2Login()
-            .and()
+            .authorizeHttpRequests { auth ->
+                    auth.requestMatchers("/").permitAll()
+                    auth.requestMatchers("/swagger-ui/**").permitAll()
+                    auth.requestMatchers("/web/**").permitAll()
+                    auth.requestMatchers("/auth/**").permitAll()
+                    auth.requestMatchers(HttpMethod.POST, "/user/register").permitAll()
+                    auth.requestMatchers("/oauth2/authorization/google").permitAll()
+                    auth.anyRequest().authenticated()
+                }
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter::class.java)
 

@@ -10,7 +10,7 @@ plugins {
 	kotlin("plugin.spring") version "1.7.10"
 }
 group = "com.backend"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.2-SNAPSHOT"
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_17
